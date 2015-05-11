@@ -38,7 +38,7 @@ namespace Doctor_Run
 
         private TimeSpan lastTimeSlideOrJump;
         private static readonly TimeSpan JumpAnimation = TimeSpan.FromMilliseconds(500);
-        private static readonly TimeSpan SlideAnimation = TimeSpan.FromMilliseconds(2500);
+        private static readonly TimeSpan SlideAnimation = TimeSpan.FromMilliseconds(1000);
     
 
         public Doctor(Game game)
@@ -94,11 +94,29 @@ namespace Doctor_Run
                 this.orientation = -1;
                 this.position.X -= 3.5f;
             }
-            else if (currentKBState.IsKeyDown(Keys.Down) == true && lastTimeSlideOrJump + SlideAnimation < gameTime.TotalGameTime)
-            {             
-                this.orientation = 2;
-                this.position.X += 6.5f;
-                lastTimeSlideOrJump = gameTime.TotalGameTime;
+            else if (currentKBState.IsKeyDown(Keys.Down) == true)
+            {
+
+                if (!oldKBState.IsKeyDown(Keys.Down))
+                {
+                    lastTimeSlideOrJump = gameTime.TotalGameTime;
+                }
+
+                
+                if (lastTimeSlideOrJump + JumpAnimation > gameTime.TotalGameTime)
+                {
+                    this.orientation = 2;
+                    this.position.X += 6.5f;
+                }
+                else
+                {
+                    this.orientation = 0;
+                }
+
+            }
+            else if (oldKBState.IsKeyDown(Keys.Down))
+            {
+                this.orientation = 0;
             }
             else if (currentKBState.IsKeyDown(Keys.Up) == true)
             {
