@@ -1,0 +1,8 @@
+Content\img\bg_far_2048.xnb
+Content\img\bg_front_2048.xnb
+Content\img\bg_mid_2048.xnb
+Content\img\doctor_run_left.xnb
+Content\img\doctor_run_mid.xnb
+Content\img\doctor_run_right.xnb
+Content\img\doctor_still.xnb
+Content\img\doctor_spritesheet.xnb
