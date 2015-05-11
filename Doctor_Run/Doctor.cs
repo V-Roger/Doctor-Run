@@ -34,6 +34,11 @@ namespace Doctor_Run
         //if it plays too quickly.
 
         KeyboardState currentKBState;
+        KeyboardState oldKBState;
+
+        private TimeSpan lastTimeSlideOrJump;
+        private static readonly TimeSpan JumpAnimation = TimeSpan.FromMilliseconds(500);
+        private static readonly TimeSpan SlideAnimation = TimeSpan.FromMilliseconds(2500);
     
 
         public Doctor(Game game)
@@ -72,12 +77,12 @@ namespace Doctor_Run
 
         public override void Update(GameTime gameTime)
         {
-            run();
+            run(gameTime);
             this.position.X -= 1.5f;
             base.Update(gameTime);
         }
 
-        public void run()
+        public void run(GameTime gameTime)
         {
             currentKBState = Keyboard.GetState();
 
@@ -89,22 +94,47 @@ namespace Doctor_Run
                 this.orientation = -1;
                 this.position.X -= 3.5f;
             }
-            else if (currentKBState.IsKeyDown(Keys.Down) == true)
-            {
+            else if (currentKBState.IsKeyDown(Keys.Down) == true && lastTimeSlideOrJump + SlideAnimation < gameTime.TotalGameTime)
+            {             
                 this.orientation = 2;
                 this.position.X += 6.5f;
+                lastTimeSlideOrJump = gameTime.TotalGameTime;
             }
             else if (currentKBState.IsKeyDown(Keys.Up) == true)
             {
-                this.orientation = 4;
-                this.position.Y -= 2f;
+
+                if (!oldKBState.IsKeyDown(Keys.Up))
+                {
+                    lastTimeSlideOrJump = gameTime.TotalGameTime;
+                }
+
+                jumpDoctor(gameTime);
+
+            }
+            else if (oldKBState.IsKeyDown(Keys.Up))
+            {
+                this.position.Y = 1000;
             }
             else
             {
                 this.orientation = 0;
             }
             runDoctor();
+            oldKBState = currentKBState;
+        }
 
+        public void jumpDoctor(GameTime gameTime)
+        {
+            if (lastTimeSlideOrJump + JumpAnimation > gameTime.TotalGameTime)
+            {
+                this.orientation = 4;
+                this.position.Y = 950;
+            }
+            else
+            {
+                this.orientation = 0;
+                this.position.Y = 1000;
+            }
         }
 
         public void runDoctor()
