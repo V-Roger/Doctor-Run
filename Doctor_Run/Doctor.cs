@@ -129,14 +129,14 @@ namespace Doctor_Run
                 {
                     
                     this.mouvement = Mouvement.GLISSADE;
-                    if (this.velocity.X >= 0) 
+                    if (this.orientation == Orientation.DROITE) 
                     {
                         this.velocity.X = 6.5f;
                     }
                     else
                     {
                         this.velocity.X = -6.5f;
-                    } 
+                    }
                 }
                 else
                 {
@@ -267,7 +267,7 @@ namespace Doctor_Run
                 }
                 else
                 {
-                    if (this.velocity.X > 0)
+                    if (this.orientation == Orientation.DROITE)
                     {
                         CurrentFrame.Y = 0;
                     }
