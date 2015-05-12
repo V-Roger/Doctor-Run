@@ -12,7 +12,8 @@ namespace Doctor_Run
     public class Doctor : DrawableGameComponent
     {
         private Vector2 position;
-        private int orientation;
+        private Vector2 velocity;
+        private bool[] orientation = new bool[5];
         SpriteBatch spriteBatch;
         private Texture2D still;
         private Texture2D run_l;
@@ -37,7 +38,7 @@ namespace Doctor_Run
         KeyboardState oldKBState;
 
         private TimeSpan lastTimeSlideOrJump;
-        private static readonly TimeSpan JumpAnimation = TimeSpan.FromMilliseconds(500);
+        private static readonly TimeSpan JumpAnimation = TimeSpan.FromMilliseconds(300);
         private static readonly TimeSpan SlideAnimation = TimeSpan.FromMilliseconds(1000);
     
 
@@ -51,7 +52,8 @@ namespace Doctor_Run
         {
             this.position.X = 100;
             this.position.Y = 1000;
-            this.orientation = 1;
+            this.velocity = Vector2.Zero;
+            this.orientation[0] = true;
             base.Initialize();
         }
 
@@ -79,6 +81,7 @@ namespace Doctor_Run
         {
             run(gameTime);
             this.position.X -= 1.5f;
+            this.position += this.velocity;
             base.Update(gameTime);
         }
 
@@ -88,13 +91,24 @@ namespace Doctor_Run
 
             if (currentKBState.IsKeyDown(Keys.Right) == true)
             {
-                this.orientation = 1;
-                this.position.X += 5f;
-            } else if (currentKBState.IsKeyDown(Keys.Left) == true) {
-                this.orientation = -1;
-                this.position.X -= 3.5f;
+                this.orientation[1] = !this.orientation[4] && !this.orientation[3]? true : false;
+                this.velocity.X = 5f;
             }
-            else if (currentKBState.IsKeyDown(Keys.Down) == true)
+            else if (oldKBState.IsKeyDown(Keys.Right))
+            {
+                this.orientation[1] = false;
+                this.velocity.X = 0;
+            }
+            else if (currentKBState.IsKeyDown(Keys.Left) == true) {
+                this.orientation[2] = !this.orientation[4] && !this.orientation[3] ? true : false;
+                this.velocity.X = -5f;
+            }
+            else if (oldKBState.IsKeyDown(Keys.Left))
+            {
+                this.orientation[2] = false;
+                this.velocity.X = 0;
+            }
+            if (currentKBState.IsKeyDown(Keys.Down) == true)
             {
 
                 if (!oldKBState.IsKeyDown(Keys.Down))
@@ -105,20 +119,23 @@ namespace Doctor_Run
                 
                 if (lastTimeSlideOrJump + JumpAnimation > gameTime.TotalGameTime)
                 {
-                    this.orientation = 2;
-                    this.position.X += 6.5f;
+                    this.orientation[3] = true;
+                    this.velocity.X = 6.5f;
                 }
                 else
                 {
-                    this.orientation = 0;
+                    this.orientation[3] = false;
+                    this.velocity.X = 0;
                 }
 
             }
             else if (oldKBState.IsKeyDown(Keys.Down))
             {
-                this.orientation = 0;
+                this.orientation[0] = true;
+                this.orientation[3] = false;
+                this.velocity.X = 0;
             }
-            else if (currentKBState.IsKeyDown(Keys.Up) == true)
+            if (currentKBState.IsKeyDown(Keys.Up) == true)
             {
 
                 if (!oldKBState.IsKeyDown(Keys.Up))
@@ -127,15 +144,18 @@ namespace Doctor_Run
                 }
 
                 jumpDoctor(gameTime);
-
             }
             else if (oldKBState.IsKeyDown(Keys.Up))
             {
-                this.position.Y = 1000;
+                this.orientation[4] = false;
             }
             else
             {
-                this.orientation = 0;
+                this.orientation[0] = true;
+                if (this.velocity.Y != 0)
+                {
+                    this.velocity.Y = this.position.Y < 1000 ? 5f : 0;
+                }
             }
             runDoctor();
             oldKBState = currentKBState;
@@ -145,13 +165,14 @@ namespace Doctor_Run
         {
             if (lastTimeSlideOrJump + JumpAnimation > gameTime.TotalGameTime)
             {
-                this.orientation = 4;
-                this.position.Y = 950;
+                this.orientation[4] = true;
+                this.velocity.Y = -5f;
             }
             else
             {
-                this.orientation = 0;
-                this.position.Y = 1000;
+                this.orientation[4] = false;
+                this.orientation[0] = true;
+                this.velocity.Y = this.position.Y < 1000 ? 5f : 0;
             }
         }
 
@@ -159,7 +180,7 @@ namespace Doctor_Run
         {
             if (AnimationDelay == 4)// delay frame update if it's too fast
             {
-                if (this.orientation == -1)
+                if (this.orientation[2])
                 {
                     CurrentFrame.Y = 1;
                     if (CurrentFrame.X < SheetSize.X)
@@ -171,7 +192,7 @@ namespace Doctor_Run
                         CurrentFrame.X = 1;//set the X to 1, so we start fresh
                     }
                 }
-                else if(this.orientation == 1)
+                else if(this.orientation[1])
                 {
                     CurrentFrame.Y = 2;
                     if (CurrentFrame.X < SheetSize.X)
@@ -183,12 +204,12 @@ namespace Doctor_Run
                         CurrentFrame.X = 1;//set the X to 1, so we start fresh
                     }
                 }
-                else if (this.orientation == 2)
+                else if (this.orientation[3])
                 {
                     CurrentFrame.Y = 0;
                     CurrentFrame.X = 1;
                 }
-                else if (this.orientation == 4)
+                else if (this.orientation[4])
                 {
                     CurrentFrame.Y = 3;
                     CurrentFrame.X = 0;
