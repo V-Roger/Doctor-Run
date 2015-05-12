@@ -220,64 +220,62 @@ namespace Doctor_Run
         {
             if (AnimationDelay == 4)// delay frame update if it's too fast
             {
-                if (this.mouvement == Mouvement.COURS)
+                switch (this.mouvement)
                 {
-                    if (this.orientation == Orientation.GAUCHE)
-                    {
-                        CurrentFrame.Y = 1;
-                        if (CurrentFrame.X < SheetSize.X)
+                    case Mouvement.COURS:
+                        if (this.orientation == Orientation.GAUCHE)
                         {
-                            ++CurrentFrame.X;// Move to a new frame
+                            CurrentFrame.Y = 1;
+                            if (CurrentFrame.X < SheetSize.X)
+                            {
+                                ++CurrentFrame.X;// Move to a new frame
+                            }
+                            else
+                            {
+                                CurrentFrame.X = 1;//set the X to 1, so we start fresh
+                            }
+                        }
+                        else if (this.orientation == Orientation.DROITE)
+                        {
+                            CurrentFrame.Y = 2;
+                            if (CurrentFrame.X < SheetSize.X)
+                            {
+                                ++CurrentFrame.X;// Move to a new frame
+                            }
+                            else
+                            {
+                                CurrentFrame.X = 1;//set the X to 1, so we start fresh
+                            }
+                        }
+                        break;
+                    case Mouvement.GLISSADE:
+                        if (this.orientation == Orientation.DROITE)
+                        {
+                            CurrentFrame.Y = 0;
+                            CurrentFrame.X = 1;
+                        }
+                        else if (this.orientation == Orientation.GAUCHE)
+                        {
+                            CurrentFrame.Y = 4;
+                            CurrentFrame.X = 1;
+                        }
+                        break;
+                    case Mouvement.SAUT:
+                        CurrentFrame.Y = 3;
+                        CurrentFrame.X = 0;
+                        break;
+                    default:
+                        if (this.orientation == Orientation.DROITE)
+                        {
+                            CurrentFrame.Y = 0;
                         }
                         else
                         {
-                            CurrentFrame.X = 1;//set the X to 1, so we start fresh
+                            CurrentFrame.Y = 4;
                         }
-                    }
-                    else if (this.orientation == Orientation.DROITE)
-                    {
-                        CurrentFrame.Y = 2;
-                        if (CurrentFrame.X < SheetSize.X)
-                        {
-                            ++CurrentFrame.X;// Move to a new frame
-                        }
-                        else
-                        {
-                            CurrentFrame.X = 1;//set the X to 1, so we start fresh
-                        }
-                    }
+                        CurrentFrame.X = 0;
+                        break;
                 }
-                else if (this.mouvement == Mouvement.GLISSADE)
-                {
-                    if (this.orientation == Orientation.DROITE)
-                    {
-                        CurrentFrame.Y = 0;
-                        CurrentFrame.X = 1;
-                    }
-                    else if (this.orientation == Orientation.GAUCHE)
-                    {
-                        CurrentFrame.Y = 4;
-                        CurrentFrame.X = 1;
-                    }
-                }
-                else if (this.mouvement == Mouvement.SAUT)
-                {
-                    CurrentFrame.Y = 3;
-                    CurrentFrame.X = 0;
-                }
-                else
-                {
-                    if (this.orientation == Orientation.DROITE)
-                    {
-                        CurrentFrame.Y = 0;
-                    }
-                    else
-                    {
-                        CurrentFrame.Y = 4;
-                    }
-                    CurrentFrame.X = 0;
-                }
-
                 AnimationDelay = 0;//Set this to 0, so we delay it again
             }
             else
