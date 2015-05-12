@@ -97,7 +97,7 @@ namespace Doctor_Run
             else if (oldKBState.IsKeyDown(Keys.Right))
             {
                 this.orientation[1] = false;
-                this.velocity.X = 0;
+                //this.velocity.X = 0;
             }
             else if (currentKBState.IsKeyDown(Keys.Left) == true) {
                 this.orientation[2] = !this.orientation[4] && !this.orientation[3] ? true : false;
@@ -106,7 +106,7 @@ namespace Doctor_Run
             else if (oldKBState.IsKeyDown(Keys.Left))
             {
                 this.orientation[2] = false;
-                this.velocity.X = 0;
+                //this.velocity.X = 0;
             }
             if (currentKBState.IsKeyDown(Keys.Down) == true)
             {
@@ -120,12 +120,19 @@ namespace Doctor_Run
                 if (lastTimeSlideOrJump + JumpAnimation > gameTime.TotalGameTime)
                 {
                     this.orientation[3] = true;
-                    this.velocity.X = 6.5f;
+                    if (this.velocity.X >= 0) 
+                    { 
+                        this.velocity.X = 6.5f;
+                    }
+                    else
+                    {
+                        this.velocity.X = -6.5f;
+                    } 
                 }
                 else
                 {
                     this.orientation[3] = false;
-                    this.velocity.X = 0;
+                    //this.velocity.X = 0;
                 }
 
             }
@@ -133,7 +140,7 @@ namespace Doctor_Run
             {
                 this.orientation[0] = true;
                 this.orientation[3] = false;
-                this.velocity.X = 0;
+                //this.velocity.X = 0;
             }
             if (currentKBState.IsKeyDown(Keys.Up) == true)
             {
@@ -155,6 +162,27 @@ namespace Doctor_Run
                 if (this.velocity.Y != 0)
                 {
                     this.velocity.Y = this.position.Y < 1000 ? 5f : 0;
+                }
+            }
+            if (!currentKBState.IsKeyDown(Keys.Left) && !currentKBState.IsKeyDown(Keys.Right))
+            {
+                if (this.velocity.X > 0)
+                {
+                    this.velocity.X -= 0.1f;
+                    if ((this.velocity.X < 0))
+                    {
+                        this.velocity.X = 0;
+                        this.orientation[1] = false;
+                        this.orientation[3] = false;
+                    }
+                } else
+                {
+                    this.velocity.X += 0.1f;
+                    if ((this.velocity.X > 0))
+                    {
+                        this.velocity.X = 0;
+                        this.orientation[2] = false;
+                    }
                 }
             }
             runDoctor();
