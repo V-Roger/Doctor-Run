@@ -13,7 +13,8 @@ namespace Doctor_Run
     {
         private Vector2 position;
         private Vector2 velocity;
-        private bool[] orientation = new bool[5];
+        private int orientation;
+        private int mouvement;
         SpriteBatch spriteBatch;
         private Texture2D still;
         private Texture2D run_l;
@@ -53,7 +54,8 @@ namespace Doctor_Run
             this.position.X = 100;
             this.position.Y = 1000;
             this.velocity = Vector2.Zero;
-            this.orientation[0] = true;
+            this.orientation = Orientation.GAUCHE;
+            this.mouvement = Mouvement.IMMOBILE;
             base.Initialize();
         }
 
@@ -91,21 +93,27 @@ namespace Doctor_Run
 
             if (currentKBState.IsKeyDown(Keys.Right) == true)
             {
-                this.orientation[1] = !this.orientation[4] && !this.orientation[3]? true : false;
+                this.orientation = Orientation.DROITE;
+                if (this.mouvement == Mouvement.IMMOBILE)
+                {
+                    this.mouvement = Mouvement.COURS;
+                }
+                
                 this.velocity.X = 5f;
             }
             else if (oldKBState.IsKeyDown(Keys.Right))
             {
-                this.orientation[1] = false;
+                this.mouvement = Mouvement.IMMOBILE;
                 //this.velocity.X = 0;
             }
             else if (currentKBState.IsKeyDown(Keys.Left) == true) {
-                this.orientation[2] = !this.orientation[4] && !this.orientation[3] ? true : false;
+                this.orientation = Orientation.GAUCHE;
+                this.mouvement = (this.mouvement == Mouvement.IMMOBILE) ? Mouvement.COURS : this.mouvement;
                 this.velocity.X = -5f;
             }
             else if (oldKBState.IsKeyDown(Keys.Left))
             {
-                this.orientation[2] = false;
+                this.mouvement = Mouvement.IMMOBILE;
                 //this.velocity.X = 0;
             }
             if (currentKBState.IsKeyDown(Keys.Down) == true)
@@ -119,9 +127,10 @@ namespace Doctor_Run
                 
                 if (lastTimeSlideOrJump + JumpAnimation > gameTime.TotalGameTime)
                 {
-                    this.orientation[3] = true;
+                    
+                    this.mouvement = Mouvement.GLISSADE;
                     if (this.velocity.X >= 0) 
-                    { 
+                    {
                         this.velocity.X = 6.5f;
                     }
                     else
@@ -131,15 +140,14 @@ namespace Doctor_Run
                 }
                 else
                 {
-                    this.orientation[3] = false;
+                    this.mouvement = Mouvement.IMMOBILE;
                     //this.velocity.X = 0;
                 }
 
             }
             else if (oldKBState.IsKeyDown(Keys.Down))
             {
-                this.orientation[0] = true;
-                this.orientation[3] = false;
+                this.mouvement = Mouvement.IMMOBILE;
                 //this.velocity.X = 0;
             }
             if (currentKBState.IsKeyDown(Keys.Up) == true)
@@ -154,11 +162,12 @@ namespace Doctor_Run
             }
             else if (oldKBState.IsKeyDown(Keys.Up))
             {
-                this.orientation[4] = false;
+                //this.orientation[4] = false;
+                this.mouvement = Mouvement.IMMOBILE;
             }
             else
             {
-                this.orientation[0] = true;
+                //this.orientation[0] = true;
                 if (this.velocity.Y != 0)
                 {
                     this.velocity.Y = this.position.Y < 1000 ? 5f : 0;
@@ -166,23 +175,27 @@ namespace Doctor_Run
             }
             if (!currentKBState.IsKeyDown(Keys.Left) && !currentKBState.IsKeyDown(Keys.Right))
             {
+                Boolean stop = false;
                 if (this.velocity.X > 0)
                 {
                     this.velocity.X -= 0.1f;
                     if ((this.velocity.X < 0))
                     {
-                        this.velocity.X = 0;
-                        this.orientation[1] = false;
-                        this.orientation[3] = false;
+                        stop = true;
                     }
                 } else
                 {
                     this.velocity.X += 0.1f;
                     if ((this.velocity.X > 0))
                     {
-                        this.velocity.X = 0;
-                        this.orientation[2] = false;
+                        stop = true;
                     }
+                }
+                if (stop)
+                {
+                    this.velocity.X = 0;
+                    this.mouvement = Mouvement.IMMOBILE;
+
                 }
             }
             runDoctor();
@@ -193,13 +206,12 @@ namespace Doctor_Run
         {
             if (lastTimeSlideOrJump + JumpAnimation > gameTime.TotalGameTime)
             {
-                this.orientation[4] = true;
+                this.mouvement = Mouvement.SAUT;
                 this.velocity.Y = -5f;
             }
             else
             {
-                this.orientation[4] = false;
-                this.orientation[0] = true;
+                this.mouvement = Mouvement.IMMOBILE;
                 this.velocity.Y = this.position.Y < 1000 ? 5f : 0;
             }
         }
@@ -208,43 +220,61 @@ namespace Doctor_Run
         {
             if (AnimationDelay == 4)// delay frame update if it's too fast
             {
-                if (this.orientation[2])
+                if (this.mouvement == Mouvement.COURS)
                 {
-                    CurrentFrame.Y = 1;
-                    if (CurrentFrame.X < SheetSize.X)
+                    if (this.orientation == Orientation.GAUCHE)
                     {
-                        ++CurrentFrame.X;// Move to a new frame
+                        CurrentFrame.Y = 1;
+                        if (CurrentFrame.X < SheetSize.X)
+                        {
+                            ++CurrentFrame.X;// Move to a new frame
+                        }
+                        else
+                        {
+                            CurrentFrame.X = 1;//set the X to 1, so we start fresh
+                        }
                     }
-                    else
+                    else if (this.orientation == Orientation.DROITE)
                     {
-                        CurrentFrame.X = 1;//set the X to 1, so we start fresh
+                        CurrentFrame.Y = 2;
+                        if (CurrentFrame.X < SheetSize.X)
+                        {
+                            ++CurrentFrame.X;// Move to a new frame
+                        }
+                        else
+                        {
+                            CurrentFrame.X = 1;//set the X to 1, so we start fresh
+                        }
                     }
                 }
-                else if(this.orientation[1])
+                else if (this.mouvement == Mouvement.GLISSADE)
                 {
-                    CurrentFrame.Y = 2;
-                    if (CurrentFrame.X < SheetSize.X)
+                    if (this.orientation == Orientation.DROITE)
                     {
-                        ++CurrentFrame.X;// Move to a new frame
+                        CurrentFrame.Y = 0;
+                        CurrentFrame.X = 1;
                     }
-                    else
+                    else if (this.orientation == Orientation.GAUCHE)
                     {
-                        CurrentFrame.X = 1;//set the X to 1, so we start fresh
+                        CurrentFrame.Y = 4;
+                        CurrentFrame.X = 1;
                     }
                 }
-                else if (this.orientation[3])
-                {
-                    CurrentFrame.Y = 0;
-                    CurrentFrame.X = 1;
-                }
-                else if (this.orientation[4])
+                else if (this.mouvement == Mouvement.SAUT)
                 {
                     CurrentFrame.Y = 3;
                     CurrentFrame.X = 0;
                 }
                 else
                 {
-                    CurrentFrame.Y = 0;
+                    if (this.velocity.X > 0)
+                    {
+                        CurrentFrame.Y = 0;
+                    }
+                    else
+                    {
+                        CurrentFrame.Y = 4;
+                    }
                     CurrentFrame.X = 0;
                 }
 
