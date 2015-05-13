@@ -16,16 +16,12 @@ namespace Doctor_Run
         private int orientation;
         private int mouvement;
         SpriteBatch spriteBatch;
-        private Texture2D still;
-        private Texture2D run_l;
-        private Texture2D run_m;
-        private Texture2D run_r;
         Texture2D spriteSheet;
-        Point FrameSize = new Point(30, 30);//this is the size of your frame.  This is an example.
+        Point frameSize = new Point(30, 30);//this is the size of your frame.  This is an example.
         //It should be the Width, Height of each of your frames.  
         //It's important that each frame is the same size.
 
-        Point SheetSize = new Point(2, 2);//this is how many frames of animation
+        Point SheetSize = new Point(2, 4);//this is how many frames of animation
         //you have.  The first number is the number of frames in a row.  The second is the
         //number of rows you have.  E.g, for 8 frames that are in one row, it would be (8,1).
 
@@ -41,7 +37,56 @@ namespace Doctor_Run
         private TimeSpan lastTimeSlideOrJump;
         private static readonly TimeSpan JumpAnimation = TimeSpan.FromMilliseconds(300);
         private static readonly TimeSpan SlideAnimation = TimeSpan.FromMilliseconds(1000);
+
+        private int state;
     
+        public Vector2 Position
+        {
+            get
+            {
+                return position;
+            }
+            set
+            {
+                position = value;
+            }
+        }
+
+        public Vector2 Velocity
+        {
+            get
+            {
+                return velocity;
+            }
+            set
+            {
+                velocity = value;
+            }
+        }
+
+        public Point FrameSize
+        {
+            get
+            {
+                return frameSize;
+            }
+            set
+            {
+                frameSize = value;
+            }
+        }
+
+        public int State
+        {
+            get
+            {
+                return state;
+            }
+            set
+            {
+                state = value;
+            }
+        }
 
         public Doctor(Game game)
             : base(game)
@@ -51,21 +96,18 @@ namespace Doctor_Run
 
         public override void Initialize()
         {
-            this.position.X = 100;
+            this.position.X = 200;
             this.position.Y = 1000;
             this.velocity = Vector2.Zero;
-            this.orientation = Orientation.GAUCHE;
+            this.orientation = Orientation.DROITE;
             this.mouvement = Mouvement.IMMOBILE;
+            this.state = Status.ALIVE;
             base.Initialize();
         }
 
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            still = Game.Content.Load<Texture2D>(@"img\doctor_still");
-            run_l = Game.Content.Load<Texture2D>(@"img\doctor_run_left");
-            run_m = Game.Content.Load<Texture2D>(@"img\doctor_run_mid");
-            run_r = Game.Content.Load<Texture2D>(@"img\doctor_run_right");
             spriteSheet = Game.Content.Load<Texture2D>(@"img\doctor_spritesheet");
             base.LoadContent();
         }
@@ -74,14 +116,15 @@ namespace Doctor_Run
         {
             spriteBatch.Begin();
             float scale = 2.0f; //200% size
-            spriteBatch.Draw(this.spriteSheet, this.position, new Rectangle(CurrentFrame.X * FrameSize.X, CurrentFrame.Y * FrameSize.Y, FrameSize.X, FrameSize.Y), Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(this.spriteSheet, this.position, new Rectangle(CurrentFrame.X * frameSize.X, CurrentFrame.Y * frameSize.Y, frameSize.X, frameSize.Y), Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
             spriteBatch.End();
             base.Draw(gameTime);
         }
 
         public override void Update(GameTime gameTime)
         {
-            run(gameTime);
+            if(this.state != Status.BLOCKED) run(gameTime);
+            collide();
             this.position.X -= 1.5f;
             this.position += this.velocity;
             base.Update(gameTime);
@@ -284,5 +327,27 @@ namespace Doctor_Run
             }
         }
 
+        private void collide()
+        {
+            Vector2 v;
+            // Test de collision
+            float[] docInfo = { Position.X, Position.Y, frameSize.X, frameSize.Y };
+            int[] relPos;
+
+            if (this.Position.X <= Game.GraphicsDevice.Viewport.Bounds.Left)
+            {
+                this.state = Status.DEAD;
+            }
+            else if (this.Position.X + this.frameSize.X >= Game.GraphicsDevice.Viewport.Bounds.Right)
+            {
+                this.state = Status.BLOCKED;
+                this.velocity.X = 0;
+            }
+            else
+            {
+                this.state = Status.FREE;
+            }
+
+        }
     }
 }

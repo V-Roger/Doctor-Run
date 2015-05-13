@@ -20,6 +20,13 @@ namespace Doctor_Run
         SpriteBatch spriteBatch;
         private Background bg;
         private Doctor who;
+        private Cyberman baddy;
+        private enum gameState
+        {
+            Start,
+            InGame,
+            GameOver
+        }
 
         public DoctorRun()
         {
@@ -41,6 +48,7 @@ namespace Doctor_Run
             // TODO: Add your initialization logic here
             bg = new Background(this);
             who = new Doctor(this);
+            baddy = new Cyberman(this);
             base.Initialize();
         }
 
@@ -76,7 +84,10 @@ namespace Doctor_Run
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            // TODO: Add your update logic here
+            if (who.State == Status.DEAD)
+            {
+                this.Exit();
+            }
 
             base.Update(gameTime);
         }
