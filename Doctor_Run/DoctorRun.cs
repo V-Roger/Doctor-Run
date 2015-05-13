@@ -8,6 +8,7 @@ using Microsoft.Xna.Framework.GamerServices;
 using Microsoft.Xna.Framework.Graphics;
 using Microsoft.Xna.Framework.Input;
 using Microsoft.Xna.Framework.Media;
+using Doctor_run;
 
 namespace Doctor_Run
 {
@@ -21,6 +22,8 @@ namespace Doctor_Run
         private Background bg;
         private Doctor who;
         private Cyberman baddy;
+        private Cyberman baddy2;
+        private Cyberman baddy3;
         private enum gameState
         {
             Start,
@@ -48,7 +51,9 @@ namespace Doctor_Run
             // TODO: Add your initialization logic here
             bg = new Background(this);
             who = new Doctor(this);
-            baddy = new Cyberman(this);
+            baddy = new Cyberman(this, new Vector2(100, 950));
+            baddy2 = new Cyberman(this, new Vector2(125, 950));
+            baddy3 = new Cyberman(this, new Vector2(175, 950));
             base.Initialize();
         }
 
@@ -84,6 +89,8 @@ namespace Doctor_Run
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
+            collide();
+
             if (who.State == Status.DEAD)
             {
                 this.Exit();
@@ -103,6 +110,14 @@ namespace Doctor_Run
             // TODO: Add your drawing code here
 
             base.Draw(gameTime);
+        }
+
+        private void collide()
+        {
+            if (Engine2D.testCollision(who, baddy.Bbox))
+            {
+                Exit();
+            }
         }
     }
 }

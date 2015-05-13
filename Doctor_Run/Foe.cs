@@ -13,13 +13,14 @@ namespace Doctor_Run
         protected Vector2 velocity;
         protected int orientation;
         protected int mouvement;
+        protected BoundingBox bbox;
         protected SpriteBatch spriteBatch;
         protected Texture2D spriteSheet;
         protected Point frameSize = new Point(60, 60);//this is the size of your frame.  This is an example.
         //It should be the Width, Height of each of your frames.  
         //It's important that each frame is the same size.
 
-        protected Point SheetSize = new Point(2,1);//this is how many frames of animation
+        protected Point SheetSize = new Point(3,1);//this is how many frames of animation
         //you have.  The first number is the number of frames in a row.  The second is the
         //number of rows you have.  E.g, for 8 frames that are in one row, it would be (8,1).
 
@@ -53,6 +54,14 @@ namespace Doctor_Run
                 velocity = value;
             }
         }
+        public BoundingBox Bbox
+        {
+            get
+            {
+                return bbox;
+            }
+        }
+
 
         public Point FrameSize
         {
@@ -78,14 +87,13 @@ namespace Doctor_Run
             }
         }
 
-        public Foe(Game game) : base(game)
+        public Foe(Game game, Vector2 pos) : base(game)
         {
-
+            Position = pos;
         }
 
         public override void Initialize()
         {
-            this.position.X = 100;
             this.velocity = Vector2.Zero;
             this.orientation = Orientation.DROITE;
             base.Initialize();
@@ -104,6 +112,8 @@ namespace Doctor_Run
         public override void Update(GameTime gameTime)
         {
             this.position += this.velocity;
+            this.bbox = new BoundingBox(new Vector3(this.Position.X, this.Position.Y, 0),
+                                        new Vector3(this.Position.X + this.FrameSize.X, this.Position.Y + this.FrameSize.Y, 0));
             base.Update(gameTime);
         }
 

@@ -10,7 +10,7 @@ namespace Doctor_Run
     class Cyberman : Foe
     {
 
-        public Cyberman(Game game) : base(game)
+        public Cyberman(Game game, Vector2 pos) : base(game, pos)
         {
             this.Game.Components.Add(this);
         }
@@ -47,13 +47,13 @@ namespace Doctor_Run
         {
             if (AnimationDelay == 4)// delay frame update if it's too fast
             {
-                if (CurrentFrame.X < SheetSize.X)
+                if (CurrentFrame.X < SheetSize.X - 1)
                 {
                     ++CurrentFrame.X;// Move to a new frame
                 }
                 else
                 {
-                    CurrentFrame.X = 0;//set the X to 1, so we start fresh
+                    CurrentFrame.X =0;//set the X to 1, so we start fresh
                 }
                 AnimationDelay = 0;//Set this to 0, so we delay it again
             }

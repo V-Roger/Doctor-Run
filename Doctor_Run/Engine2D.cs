@@ -42,6 +42,15 @@ namespace Doctor_run
                 bottomRightCorner.Y = who.Position.Y + who.FrameSize.Y + who.Velocity.Y;
             }
 
+            if (obj1 is Foe)
+            {
+                Foe killer = (Foe)obj1;
+                upperLeftCorner.X = killer.Position.X + killer.Velocity.X;
+                upperLeftCorner.Y = killer.Position.Y + killer.Velocity.Y;
+                bottomRightCorner.X = killer.Position.X + killer.FrameSize.X + killer.Velocity.X;
+                bottomRightCorner.Y = killer.Position.Y + killer.FrameSize.Y + killer.Velocity.Y;
+            }
+
             BoundingBox bbox_test = new BoundingBox(upperLeftCorner, bottomRightCorner);
 
             return bbox_test.Intersects(obj2);

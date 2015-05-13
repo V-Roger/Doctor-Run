@@ -15,6 +15,7 @@ namespace Doctor_Run
         private Vector2 velocity;
         private int orientation;
         private int mouvement;
+        private BoundingBox bbox;
         SpriteBatch spriteBatch;
         Texture2D spriteSheet;
         Point frameSize = new Point(30, 30);//this is the size of your frame.  This is an example.
@@ -64,6 +65,14 @@ namespace Doctor_Run
             }
         }
 
+        public BoundingBox Bbox
+        {
+            get
+            {
+                return bbox;
+            }
+        }
+
         public Point FrameSize
         {
             get
@@ -96,7 +105,7 @@ namespace Doctor_Run
 
         public override void Initialize()
         {
-            this.position.X = 200;
+            this.position.X = 450;
             this.position.Y = 1000;
             this.velocity = Vector2.Zero;
             this.orientation = Orientation.DROITE;
@@ -242,6 +251,8 @@ namespace Doctor_Run
                 }
             }
             runDoctor();
+            this.bbox = new BoundingBox(new Vector3(this.Position.X, this.Position.Y, 0),
+                                        new Vector3(this.Position.X + this.FrameSize.X, this.Position.Y + this.FrameSize.Y, 0));
             oldKBState = currentKBState;
         }
 
