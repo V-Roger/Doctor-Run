@@ -19,7 +19,7 @@ namespace Doctor_Run
     {
         GraphicsDeviceManager graphics;
         SpriteBatch spriteBatch;
-        private Background bg;
+        private Level lvl;
         private Doctor who;
         private Cyberman baddy;
         private Cyberman baddy2;
@@ -49,7 +49,7 @@ namespace Doctor_Run
         protected override void Initialize()
         {
             // TODO: Add your initialization logic here
-            bg = new Background(this);
+            lvl = new City(this);
             who = new Doctor(this);
             baddy = new Cyberman(this, new Vector2(100, 950));
             baddy2 = new Cyberman(this, new Vector2(125, 950));
@@ -115,6 +115,11 @@ namespace Doctor_Run
         private void collide()
         {
             if (Engine2D.testCollision(who, baddy.Bbox))
+            {
+                Exit();
+            }
+
+            if(Engine2D.testCollision(who, lvl.tardisBbox))
             {
                 Exit();
             }

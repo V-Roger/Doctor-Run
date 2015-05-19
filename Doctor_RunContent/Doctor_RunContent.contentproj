@@ -30,18 +30,18 @@
     <Reference Include="Microsoft.Xna.Framework.Content.Pipeline.VideoImporters, Version=4.0.0.0, Culture=neutral, PublicKeyToken=842cf8be1de50553, processorArchitecture=MSIL" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="img\bg_far_2048.png">
-      <Name>bg_far_2048</Name>
+    <Compile Include="img\city_far.png">
+      <Name>city_far</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="img\bg_front_2048.png">
-      <Name>bg_front_2048</Name>
+    <Compile Include="img\city_front.png">
+      <Name>city_front</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
-    <Compile Include="img\bg_mid_2048.png">
-      <Name>bg_mid_2048</Name>
+    <Compile Include="img\city_mid.png">
+      <Name>city_mid</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>
@@ -80,6 +80,13 @@
   <ItemGroup>
     <Compile Include="img\cyberman_spritesheet.png">
       <Name>cyberman_spritesheet</Name>
+      <Importer>TextureImporter</Importer>
+      <Processor>TextureProcessor</Processor>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="img\tardis_spritesheet.png">
+      <Name>tardis_spritesheet</Name>
       <Importer>TextureImporter</Importer>
       <Processor>TextureProcessor</Processor>
     </Compile>

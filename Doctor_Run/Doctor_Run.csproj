@@ -73,11 +73,13 @@
     <Reference Include="System.Net" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="City.cs" />
     <Compile Include="Cyberman.cs" />
     <Compile Include="Engine2D.cs" />
     <Compile Include="Background.cs" />
     <Compile Include="Doctor.cs" />
     <Compile Include="Foe.cs" />
+    <Compile Include="Level.cs" />
     <Compile Include="Mouvement.cs" />
     <Compile Include="Orientation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
