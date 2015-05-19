@@ -11,7 +11,7 @@ namespace Doctor_Run
         public City(Game game) : base(game) 
         {
             name = "city";
-            lvlLength = 1f;
+            lvlLength = 0.5f;
             this.bg = new Background(game, name, 2);
             this.Game.Components.Add(this);
         }

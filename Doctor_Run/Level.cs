@@ -43,7 +43,7 @@ namespace Doctor_Run
         
         public override void Initialize()
         {
-            this.TardisPosition.X = lvlLength * 1920 - 250;
+            this.TardisPosition.X = 2048;
             this.TardisPosition.Y = 970;
             base.Initialize();
         }
@@ -76,6 +76,10 @@ namespace Doctor_Run
             if (this.bg.Bg_back_position.X <= -lvlLength * GraphicsDevice.Viewport.Width)
             {
                 this.bg.SpeedIdx = 0;
+            }
+            else if (lvlLength * GraphicsDevice.Viewport.Width + this.bg.Bg_back_position.X <= 250)
+            {
+                this.TardisPosition.X -= 1.5f;
             }
         }
     }
