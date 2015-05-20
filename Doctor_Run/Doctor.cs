@@ -12,17 +12,20 @@ namespace Doctor_Run
     public class Doctor : DrawableGameComponent
     {
         private Vector2 position;
+        private Vector2 sonicPosition;
         private Vector2 velocity;
         private int orientation;
         private int mouvement;
         private BoundingBox bbox;
+        private BoundingBox sonicBbox;
         SpriteBatch spriteBatch;
         Texture2D spriteSheet;
-        Point frameSize = new Point(30, 30);//this is the size of your frame.  This is an example.
+        Texture2D sonicSprite;
+        Point frameSize = new Point(40, 40);//this is the size of your frame.  This is an example.
         //It should be the Width, Height of each of your frames.  
         //It's important that each frame is the same size.
 
-        Point SheetSize = new Point(2, 4);//this is how many frames of animation
+        Point SheetSize = new Point(2, 5);//this is how many frames of animation
         //you have.  The first number is the number of frames in a row.  The second is the
         //number of rows you have.  E.g, for 8 frames that are in one row, it would be (8,1).
 
@@ -76,6 +79,14 @@ namespace Doctor_Run
             }
         }
 
+        public BoundingBox SonicBbox
+        {
+            get
+            {
+                return sonicBbox;
+            }
+        }
+
         public Point FrameSize
         {
             get
@@ -121,7 +132,8 @@ namespace Doctor_Run
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
-            spriteSheet = Game.Content.Load<Texture2D>(@"img\doctor_spritesheet");
+            spriteSheet = Game.Content.Load<Texture2D>(@"img\spritesheet");
+            sonicSprite = Game.Content.Load<Texture2D>(@"img\sonic_sprite");
             base.LoadContent();
         }
 
@@ -130,13 +142,22 @@ namespace Doctor_Run
             spriteBatch.Begin();
             float scale = 2.0f; //200% size
             spriteBatch.Draw(this.spriteSheet, this.position, new Rectangle(CurrentFrame.X * frameSize.X, CurrentFrame.Y * frameSize.Y, frameSize.X, frameSize.Y), Color.White * this.alpha, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            if(this.mouvement == Mouvement.SONICDROITE) {
+                this.sonicPosition = this.position + new Vector2(this.frameSize.X+38, 24);
+                spriteBatch.Draw(this.sonicSprite, sonicPosition, new Rectangle(0, 0, 27, 14), Color.White, 0f, Vector2.Zero, 1f, SpriteEffects.None, 0f);
+            }
+            else if (this.mouvement == Mouvement.SONICGAUCHE)
+            {
+                this.sonicPosition = this.position - new Vector2(30, -15);
+                spriteBatch.Draw(this.sonicSprite, sonicPosition, new Rectangle(0, 14, 27, 14), Color.White, 0f, Vector2.Zero, 1.5f, SpriteEffects.None, 0f);
+            }
             spriteBatch.End();
             base.Draw(gameTime);
         }
 
         public override void Update(GameTime gameTime)
         {
-            if(this.state != Status.BLOCKED) run(gameTime);
+            if(this.state != Status.BLOCKED) move(gameTime);
             collide();
             this.position.X -= 1.5f;
             this.position += this.velocity;
@@ -150,7 +171,7 @@ namespace Doctor_Run
             }
         }
 
-        public void run(GameTime gameTime)
+        public void move(GameTime gameTime)
         {
             currentKBState = Keyboard.GetState();
 
@@ -233,7 +254,7 @@ namespace Doctor_Run
                 //this.orientation[0] = true;
                 if (this.velocity.Y != 0)
                 {
-                    this.velocity.Y = this.position.Y < 1000 ? 5f : 0;
+                    this.velocity.Y = this.position.Y < 1000 ? 8f : 0;
                 }
             }
             if (!currentKBState.IsKeyDown(Keys.Left) && !currentKBState.IsKeyDown(Keys.Right))
@@ -261,9 +282,27 @@ namespace Doctor_Run
 
                 }
             }
+            if (currentKBState.IsKeyDown(Keys.Space))
+            {
+                this.velocity.X = 0;
+                if (this.orientation == Orientation.DROITE)
+                {
+                    this.mouvement = Mouvement.SONICDROITE;
+                }
+                else
+                {
+                    this.mouvement = Mouvement.SONICGAUCHE;
+                }
+                sonic();
+            }
+            {
+
+            }
             runDoctor();
             this.bbox = new BoundingBox(new Vector3(this.Position.X, this.Position.Y, 0),
                                         new Vector3(this.Position.X + this.FrameSize.X, this.Position.Y + this.FrameSize.Y, 0));
+            this.sonicBbox = new BoundingBox(new Vector3(this.sonicPosition.X, this.sonicPosition.Y, 0),
+                                             new Vector3(this.sonicPosition.X + 14, this.sonicPosition.Y + 19, 0));
             oldKBState = currentKBState;
         }
 
@@ -272,7 +311,7 @@ namespace Doctor_Run
             if (lastTimeSlideOrJump + JumpAnimation > gameTime.TotalGameTime)
             {
                 this.mouvement = Mouvement.SAUT;
-                this.velocity.Y = -5f;
+                this.velocity.Y = -8f;
             }
             else
             {
@@ -329,6 +368,14 @@ namespace Doctor_Run
                         CurrentFrame.Y = 3;
                         CurrentFrame.X = 0;
                         break;
+                    case Mouvement.SONICDROITE:
+                        CurrentFrame.Y = 5;
+                        CurrentFrame.X = 0;
+                        break;
+                    case Mouvement.SONICGAUCHE:
+                        CurrentFrame.Y = 5;
+                        CurrentFrame.X = 1;
+                        break;
                     default:
                         if (this.orientation == Orientation.DROITE)
                         {
@@ -359,7 +406,6 @@ namespace Doctor_Run
             Vector2 v;
             // Test de collision
             float[] docInfo = { Position.X, Position.Y, frameSize.X, frameSize.Y };
-            int[] relPos;
 
             if (this.Position.X <= Game.GraphicsDevice.Viewport.Bounds.Left)
             {
@@ -375,6 +421,11 @@ namespace Doctor_Run
                 this.state = Status.FREE;
             }
 
+        }
+
+        private void sonic()
+        {
+            
         }
     }
 }

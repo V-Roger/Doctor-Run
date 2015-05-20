@@ -23,8 +23,11 @@ namespace Doctor_Run
         private Doctor who;
         private Tardis tardis;
         private List<Foe> baddies;
+        Random rnd;
+
 
         private float timer;
+        private float spawnTimer;
 
         private bool lvlOver;
 
@@ -73,11 +76,9 @@ namespace Doctor_Run
             tardis = new Tardis(this);
             baddies = new List<Foe>();
             timer = -1f;
-            baddies.Add(new Cyberman(this, new Vector2(100, 950)));
-            baddies.Add(new Cyberman(this, new Vector2(125, 950)));
-            baddies.Add(new Cyberman(this, new Vector2(150, 950)));
-            baddies.Add(new Cyberman(this, new Vector2(50, 950)));
-            baddies.Add(new Cyberman(this, new Vector2(200, 950)));
+            lvlOver = false;
+            rnd = new Random();
+            spawnTimer = 0f;
             base.Initialize();
         }
 
@@ -117,14 +118,31 @@ namespace Doctor_Run
 
             checkLvlEnd();
 
+            spawnTimer += (float)gameTime.ElapsedGameTime.TotalSeconds; 
+
             if (timer != -1f)
             {
                 timer += (float)gameTime.ElapsedGameTime.TotalSeconds; 
             }
             if (lvlOver && timer > 2.0f)
             {
-                this.lvlType = "graveyard";
+                switch (this.lvlType)
+                {
+                    case "city":
+                        this.lvlType = "graveyard";
+                        break;
+                    case "graveyard":
+                        this.lvlType = "ruins";
+                        break;
+                    default:
+                        break;
+                }
                 this.Initialize();
+            }
+
+            if(this.lvlType == "city")
+            {
+                CybermenInvasion(gameTime);
             }
 
             if (who.State == Status.DEAD)
@@ -178,7 +196,26 @@ namespace Doctor_Run
                 {
                     Exit();
                 }
+                if (baddy is Cyberman)
+                {
+                    if (Engine2D.testSonicAttack(who.SonicBbox, baddy.Bbox))
+                    {
+                        baddy.State = Status.DEAD;
+                    }
+                }
             }
+        }
+
+        private void CybermenInvasion(GameTime gameTime)
+        {
+                if (rnd.Next(1, 200) == 1)
+                {
+                    baddies.Add(new Cyberman(this, new Vector2(0, 950), Orientation.DROITE));
+                }
+                else if (rnd.Next(1,200) == 2)
+                {
+                    baddies.Add(new Cyberman(this, new Vector2(1920, 950), Orientation.GAUCHE));
+                }
         }
     }
 }

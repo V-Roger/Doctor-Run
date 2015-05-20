@@ -10,14 +10,16 @@ namespace Doctor_Run
     class Cyberman : Foe
     {
 
-        public Cyberman(Game game, Vector2 pos) : base(game, pos)
+        public Cyberman(Game game, Vector2 pos, int orientation) : base(game, pos, orientation)
         {
             this.Game.Components.Add(this);
         }
 
         public override void Initialize()
         {
-            this.position.Y = 980;            
+            this.position.Y = 980;
+            this.velocity.X = this.orientation == Orientation.DROITE ? 1f : -2.5f; 
+            this.state = Status.ALIVE;
             base.Initialize();
         }
 
@@ -32,7 +34,10 @@ namespace Doctor_Run
         {
             spriteBatch.Begin();
             float scale = 1.5f;
-            spriteBatch.Draw(this.spriteSheet, this.position, new Rectangle(CurrentFrame.X * frameSize.X, CurrentFrame.Y * frameSize.Y, frameSize.X, frameSize.Y), Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            if (state == Status.ALIVE)
+            {
+                spriteBatch.Draw(this.spriteSheet, this.position, new Rectangle(CurrentFrame.X * frameSize.X, CurrentFrame.Y * frameSize.Y, frameSize.X, frameSize.Y), Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            }
             spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -45,6 +50,14 @@ namespace Doctor_Run
 
         public override void animate()
         {
+            if (this.orientation == Orientation.DROITE)
+            {
+                this.CurrentFrame.Y = 0;
+            }
+            else
+            {
+                this.CurrentFrame.Y = 1;
+            }
             if (AnimationDelay == 4)// delay frame update if it's too fast
             {
                 if (CurrentFrame.X < SheetSize.X - 1)

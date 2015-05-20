@@ -87,15 +87,14 @@ namespace Doctor_Run
             }
         }
 
-        public Foe(Game game, Vector2 pos) : base(game)
+        public Foe(Game game, Vector2 pos, int _orientation) : base(game)
         {
             Position = pos;
+            orientation = _orientation;
         }
 
         public override void Initialize()
         {
-            this.velocity = Vector2.Zero;
-            this.orientation = Orientation.DROITE;
             base.Initialize();
         }
 
@@ -112,8 +111,15 @@ namespace Doctor_Run
         public override void Update(GameTime gameTime)
         {
             this.position += this.velocity;
+            if (state == Status.ALIVE)
+            {
             this.bbox = new BoundingBox(new Vector3(this.Position.X, this.Position.Y, 0),
                                         new Vector3(this.Position.X + this.FrameSize.X, this.Position.Y + this.FrameSize.Y, 0));
+            }
+            else
+            {
+                this.bbox = new BoundingBox(new Vector3(0, 0, 0), new Vector3(0, 0, 0));
+            }
             base.Update(gameTime);
         }
 

@@ -56,6 +56,11 @@ namespace Doctor_run
             return bbox_test.Intersects(obj2);
         }
 
+        public static Boolean testSonicAttack(BoundingBox sonic, BoundingBox Foe)
+        {
+            return sonic.Intersects(Foe);
+        }
+
         /// <summary>
         /// Donne la position d'un objet par rapport à un autre
         /// </summary>
