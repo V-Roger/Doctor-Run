@@ -40,6 +40,9 @@ namespace Doctor_Run
         private static readonly TimeSpan SlideAnimation = TimeSpan.FromMilliseconds(1000);
 
         private int state;
+
+        private bool TardisEntered;
+        private float alpha;
     
         public Vector2 Position
         {
@@ -111,6 +114,7 @@ namespace Doctor_Run
             this.orientation = Orientation.DROITE;
             this.mouvement = Mouvement.IMMOBILE;
             this.state = Status.ALIVE;
+            this.alpha = 1f;
             base.Initialize();
         }
 
@@ -125,7 +129,7 @@ namespace Doctor_Run
         {
             spriteBatch.Begin();
             float scale = 2.0f; //200% size
-            spriteBatch.Draw(this.spriteSheet, this.position, new Rectangle(CurrentFrame.X * frameSize.X, CurrentFrame.Y * frameSize.Y, frameSize.X, frameSize.Y), Color.White, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(this.spriteSheet, this.position, new Rectangle(CurrentFrame.X * frameSize.X, CurrentFrame.Y * frameSize.Y, frameSize.X, frameSize.Y), Color.White * this.alpha, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
             spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -137,6 +141,13 @@ namespace Doctor_Run
             this.position.X -= 1.5f;
             this.position += this.velocity;
             base.Update(gameTime);
+            if (this.TardisEntered)
+            {
+                if (this.alpha > 0)
+                {
+                    this.alpha -= 0.1f;
+                }
+            }
         }
 
         public void run(GameTime gameTime)
@@ -336,6 +347,11 @@ namespace Doctor_Run
             {
                 AnimationDelay += 1;// add one, so we can continue when we are ready
             }
+        }
+
+        public void enterTardis()
+        {
+            this.TardisEntered = true;
         }
 
         private void collide()

@@ -21,9 +21,15 @@ namespace Doctor_Run
         SpriteBatch spriteBatch;
         private Level lvl;
         private Doctor who;
-        private Cyberman baddy;
-        private Cyberman baddy2;
-        private Cyberman baddy3;
+        private Tardis tardis;
+        private List<Foe> baddies;
+
+        private float timer;
+
+        private bool lvlOver;
+
+        private string lvlType = "city";
+
         private enum gameState
         {
             Start,
@@ -48,12 +54,30 @@ namespace Doctor_Run
         /// </summary>
         protected override void Initialize()
         {
-            // TODO: Add your initialization logic here
-            lvl = new City(this);
+            switch (this.lvlType)
+            {
+                case "city":
+                    lvl = new City(this);
+                    break;
+                case "graveyard":
+                    lvl = new Graveyard(this);
+                    break;
+                case "ruins":
+                    lvl = new Ruins(this);
+                    break;
+                default:
+                    lvl = new City(this);
+                    break;
+            }
             who = new Doctor(this);
-            baddy = new Cyberman(this, new Vector2(100, 950));
-            baddy2 = new Cyberman(this, new Vector2(125, 950));
-            baddy3 = new Cyberman(this, new Vector2(175, 950));
+            tardis = new Tardis(this);
+            baddies = new List<Foe>();
+            timer = -1f;
+            baddies.Add(new Cyberman(this, new Vector2(100, 950)));
+            baddies.Add(new Cyberman(this, new Vector2(125, 950)));
+            baddies.Add(new Cyberman(this, new Vector2(150, 950)));
+            baddies.Add(new Cyberman(this, new Vector2(50, 950)));
+            baddies.Add(new Cyberman(this, new Vector2(200, 950)));
             base.Initialize();
         }
 
@@ -89,7 +113,19 @@ namespace Doctor_Run
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed)
                 this.Exit();
 
-            collide();
+            collide(gameTime);
+
+            checkLvlEnd();
+
+            if (timer != -1f)
+            {
+                timer += (float)gameTime.ElapsedGameTime.TotalSeconds; 
+            }
+            if (lvlOver && timer > 2.0f)
+            {
+                this.lvlType = "graveyard";
+                this.Initialize();
+            }
 
             if (who.State == Status.DEAD)
             {
@@ -112,16 +148,36 @@ namespace Doctor_Run
             base.Draw(gameTime);
         }
 
-        private void collide()
+        private void collide(GameTime gameTime)
         {
-            if (Engine2D.testCollision(who, baddy.Bbox))
-            {
-                Exit();
-            }
 
-            if(Engine2D.testCollision(who, lvl.tardisBbox))
+            ennemiesCollision();
+
+            if(!lvlOver && Engine2D.testCollision(who, tardis.tardisBbox))
             {
-                Exit();
+                who.enterTardis();
+                tardis.dematerialise(gameTime);                
+                this.timer = 0f;
+                this.lvlOver = true;
+            }
+        }
+
+        private void checkLvlEnd()
+        {
+            if (this.lvl.LvlLength * GraphicsDevice.Viewport.Width + this.lvl.Bg_Position.X <= 250)
+            {
+                this.tardis.tardisPosition -= new Vector2(1.5f, 0);
+            }
+        }
+
+        private void ennemiesCollision()
+        {
+            foreach (Foe baddy in baddies)
+            {
+                if (Engine2D.testCollision(who, baddy.Bbox))
+                {
+                    Exit();
+                }
             }
         }
     }
