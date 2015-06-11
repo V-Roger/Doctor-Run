@@ -31,7 +31,7 @@ namespace Doctor_Run
 
         private bool lvlOver;
 
-        private string lvlType = "city";
+        private string lvlType = "graveyard";
 
         private enum gameState
         {
@@ -144,6 +144,10 @@ namespace Doctor_Run
             {
                 CybermenInvasion(gameTime);
             }
+            else if (this.lvlType == "graveyard")
+            {
+                WeepingAngelsAttack(gameTime);
+            }
 
             if (who.State == Status.DEAD)
             {
@@ -216,6 +220,14 @@ namespace Doctor_Run
                 {
                     baddies.Add(new Cyberman(this, new Vector2(1920, 950), Orientation.GAUCHE));
                 }
+        }
+
+        private void WeepingAngelsAttack(GameTime gameTime)
+        {
+            if (rnd.Next(1, 600) == 1)
+            {
+                baddies.Add(new WeepingAngel(this, new Vector2(0, 950), Orientation.DROITE, who));
+            }
         }
     }
 }

@@ -89,6 +89,7 @@
     <Compile Include="Ruins.cs" />
     <Compile Include="Status.cs" />
     <Compile Include="Tardis.cs" />
+    <Compile Include="WeepingAngel.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Game.ico" />

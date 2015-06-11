@@ -111,6 +111,14 @@ namespace Doctor_Run
             }
         }
 
+        public int DoctorOrientation
+        {
+            get
+            {
+                return orientation;
+            }
+        }
+
         public Doctor(Game game)
             : base(game)
         {
