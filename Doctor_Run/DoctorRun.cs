@@ -24,14 +24,14 @@ namespace Doctor_Run
         private Tardis tardis;
         private List<Foe> baddies;
         Random rnd;
-
+          
 
         private float timer;
         private float spawnTimer;
 
         private bool lvlOver;
 
-        private string lvlType = "graveyard";
+        private string lvlType = "ruins";
 
         private enum gameState
         {
@@ -148,6 +148,12 @@ namespace Doctor_Run
             {
                 WeepingAngelsAttack(gameTime);
             }
+            else
+            {
+                DalekApocalypse(gameTime);
+            }
+
+
 
             if (who.State == Status.DEAD)
             {
@@ -207,6 +213,13 @@ namespace Doctor_Run
                         baddy.State = Status.DEAD;
                     }
                 }
+                else if (baddy is Dalek)
+                {
+                    if (Engine2D.testLaserAttack(who.Bbox,(Dalek) baddy))
+                    {
+                        who.State = Status.DEAD;
+                    }
+                }
             }
         }
 
@@ -227,6 +240,14 @@ namespace Doctor_Run
             if (rnd.Next(1, 600) == 1)
             {
                 baddies.Add(new WeepingAngel(this, new Vector2(0, 950), Orientation.DROITE, who));
+            }
+        }
+
+        private void DalekApocalypse(GameTime gameTime)
+        {
+            if (rnd.Next(1, 350) == 1)
+            {
+                baddies.Add(new Dalek(this, new Vector2(0, 950), Orientation.DROITE, who));
             }
         }
     }

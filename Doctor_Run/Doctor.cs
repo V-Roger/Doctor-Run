@@ -110,7 +110,7 @@ namespace Doctor_Run
                 state = value;
             }
         }
-
+ 
         public int DoctorOrientation
         {
             get
@@ -270,14 +270,14 @@ namespace Doctor_Run
                 Boolean stop = false;
                 if (this.velocity.X > 0)
                 {
-                    this.velocity.X -= 0.1f;
+                    this.velocity.X -= 0.2f;
                     if ((this.velocity.X < 0))
                     {
                         stop = true;
                     }
                 } else
                 {
-                    this.velocity.X += 0.1f;
+                    this.velocity.X += 0.2f;
                     if ((this.velocity.X > 0))
                     {
                         stop = true;

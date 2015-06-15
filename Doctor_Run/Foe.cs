@@ -14,6 +14,7 @@ namespace Doctor_Run
         protected int orientation;
         protected int mouvement;
         protected BoundingBox bbox;
+        protected Point bboxSize = new Point(30,50);
         protected SpriteBatch spriteBatch;
         protected Texture2D spriteSheet;
         protected Point frameSize = new Point(60, 60);//this is the size of your frame.  This is an example.
@@ -114,7 +115,7 @@ namespace Doctor_Run
             if (state == Status.ALIVE)
             {
             this.bbox = new BoundingBox(new Vector3(this.Position.X, this.Position.Y, 0),
-                                        new Vector3(this.Position.X + this.FrameSize.X, this.Position.Y + this.FrameSize.Y, 0));
+                                        new Vector3(this.Position.X + this.bboxSize.X, this.Position.Y + this.bboxSize.Y, 0));
             }
             else
             {

@@ -61,6 +61,16 @@ namespace Doctor_run
             return sonic.Intersects(Foe);
         }
 
+        public static Boolean testLaserAttack(BoundingBox doctor, Dalek baddy)
+        {
+            bool hit = false;
+            foreach (LaserBeam deathRay in baddy.DalekLove)
+            {
+                hit = deathRay.Bbox.Intersects(doctor);
+            }
+            return hit;
+        }
+
         /// <summary>
         /// Donne la position d'un objet par rapport à un autre
         /// </summary>
