@@ -119,6 +119,14 @@ namespace Doctor_Run
             }
         }
 
+        public int DoctorMouvement
+        {
+            get
+            {
+                return mouvement;
+            }
+        }
+
         public Doctor(Game game)
             : base(game)
         {
@@ -217,7 +225,7 @@ namespace Doctor_Run
                 }
 
                 
-                if (lastTimeSlideOrJump + JumpAnimation > gameTime.TotalGameTime)
+                if (lastTimeSlideOrJump + SlideAnimation > gameTime.TotalGameTime)
                 {
                     
                     this.mouvement = Mouvement.GLISSADE;

@@ -71,6 +71,10 @@ namespace Doctor_run
             return hit;
         }
 
+        public static Boolean testShield(BoundingBox deathRay, BoundingBox shield) {
+            return deathRay.Intersects(shield);
+        }
+
         /// <summary>
         /// Donne la position d'un objet par rapport à un autre
         /// </summary>

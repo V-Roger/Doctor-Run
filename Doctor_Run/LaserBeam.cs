@@ -12,6 +12,7 @@ namespace Doctor_Run
         private Vector2 position;
         private Vector2 velocity;
         private int orientation;
+        private int state;
         SpriteBatch spriteBatch;
         Texture2D laser;
         public BoundingBox bbox;
@@ -26,6 +27,18 @@ namespace Doctor_Run
             }
         }
 
+        public int State
+        {
+            get
+            {
+                return state;
+            }
+            set
+            {
+                state = value;
+            }
+        }
+
         public LaserBeam(Game game, Vector2 _pos)
             : base(game)
         {
@@ -35,6 +48,7 @@ namespace Doctor_Run
 
         public override void Initialize()
         {
+            this.state = Status.FREE;
             this.velocity.X = 10f;
             this.position.Y += 10f;
             base.Initialize();
@@ -49,17 +63,22 @@ namespace Doctor_Run
 
         public override void Update(GameTime gameTime)
         {
-            this.position += this.velocity;
-            this.bbox = new BoundingBox(new Vector3(this.position.X, this.position.Y, 0),
-                                        new Vector3(this.position.X + this.FrameSize.X, this.position.Y + this.FrameSize.Y, 0));
+            if (this.state != Status.DEAD)
+            {
+                this.position += this.velocity;
+                this.bbox = new BoundingBox(new Vector3(this.position.X, this.position.Y + 22, 0),
+                                            new Vector3(this.position.X + this.FrameSize.X, this.position.Y + 42, 0));
+            }
             base.Update(gameTime);
         }
 
         public override void Draw(GameTime gameTime)
         {
             spriteBatch.Begin();
-            float scale = 0.5f;
-            spriteBatch.Draw(this.laser, this.position, Color.AliceBlue);
+            if (this.state != Status.DEAD)
+            {
+                spriteBatch.Draw(this.laser, this.position, Color.AliceBlue);
+            }
             spriteBatch.End();
             base.Draw(gameTime);
         }

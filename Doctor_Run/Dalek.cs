@@ -31,7 +31,7 @@ namespace Doctor_Run
         {
             rnd = new Random();
             dalekLove = new List<LaserBeam>();
-            this.position.Y = 970;
+            this.position.Y = 980;
             this.velocity = Vector2.Zero;
             this.state = Status.ALIVE;
             base.Initialize();
@@ -64,7 +64,7 @@ namespace Doctor_Run
 
         public void exterminate(GameTime gameTime)
         {
-            if (rnd.Next(1, 150) == 1)
+            if (rnd.Next(1, 350) == 1)
             {
                 fire();
             }

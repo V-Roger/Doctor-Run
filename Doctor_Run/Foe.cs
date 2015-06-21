@@ -17,9 +17,12 @@ namespace Doctor_Run
         protected Point bboxSize = new Point(30,50);
         protected SpriteBatch spriteBatch;
         protected Texture2D spriteSheet;
+        protected Texture2D explosion;
         protected Point frameSize = new Point(60, 60);//this is the size of your frame.  This is an example.
         //It should be the Width, Height of each of your frames.  
         //It's important that each frame is the same size.
+        protected Point explosionSize = new Point(64, 64);
+        protected Point explosionFrames = new Point(4, 4);
 
         protected Point SheetSize = new Point(3,1);//this is how many frames of animation
         //you have.  The first number is the number of frames in a row.  The second is the
@@ -101,6 +104,7 @@ namespace Doctor_Run
 
         protected override void LoadContent()
         {
+            explosion = Game.Content.Load<Texture2D>(@"img\explosion_sprite");
             base.LoadContent();
         }
 
@@ -127,6 +131,11 @@ namespace Doctor_Run
         public virtual void animate()
         {
             
+        }
+
+        public void kill()
+        {
+            this.State = Status.DEAD;
         }
     }
 }

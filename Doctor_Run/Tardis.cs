@@ -10,18 +10,22 @@ namespace Doctor_Run
     class Tardis : DrawableGameComponent
     {
         protected Texture2D spritesheet;
+        protected Texture2D shield;
         protected Vector2 TardisPosition;
         protected float TardisAlpha;
         protected double TardisDematerialisationTime;
         protected bool dematerialisation;
         protected double TardisStartTime;
         protected BoundingBox TardisBbox;
+        protected BoundingBox ShieldBbox;
 
         protected SpriteBatch spriteBatch;
 
         protected Point frameSize = new Point(50, 90);//this is the size of your frame.  This is an example.
         //It should be the Width, Height of each of your frames.  
         //It's important that each frame is the same size.
+
+        protected Point shieldSize = new Point(330, 70);
 
         protected Point SheetSize = new Point(3, 1);//this is how many frames of animation
         //you have.  The first number is the number of frames in a row.  The second is the
@@ -37,6 +41,14 @@ namespace Doctor_Run
             get
             {
                 return TardisBbox;
+            }
+        }
+
+        public BoundingBox shieldBbox
+        {
+            get
+            {
+                return ShieldBbox;
             }
         }
 
@@ -60,7 +72,7 @@ namespace Doctor_Run
 
         public override void Initialize()
         {
-            this.TardisPosition.X = 2048;
+            this.TardisPosition.X = 2500;
             this.TardisPosition.Y = 970;
             this.TardisAlpha = 1;
             this.TardisDematerialisationTime = 2f;
@@ -72,6 +84,7 @@ namespace Doctor_Run
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
             this.spritesheet = Game.Content.Load<Texture2D>(@"img\tardis_spritesheet");
+            this.shield = Game.Content.Load<Texture2D>(@"img\shield");
             base.LoadContent();
         }
 
@@ -80,6 +93,7 @@ namespace Doctor_Run
             spriteBatch.Begin();
             float scale = 1f;
             spriteBatch.Draw(this.spritesheet, this.TardisPosition, new Rectangle(CurrentFrame.X * frameSize.X, CurrentFrame.Y * frameSize.Y, frameSize.X, frameSize.Y), Color.White * this.TardisAlpha, 0f, Vector2.Zero, scale, SpriteEffects.None, 0f);
+            spriteBatch.Draw(this.shield, this.TardisPosition - new Vector2((this.shieldSize.X - this.frameSize.X)/2, 0), Color.AliceBlue * 0.6f);
             spriteBatch.End();
             base.Draw(gameTime);
         }
@@ -89,6 +103,8 @@ namespace Doctor_Run
             checkTardis(gameTime);
             this.TardisBbox = new BoundingBox(new Vector3(this.TardisPosition.X, this.TardisPosition.Y, 0),
                                               new Vector3(this.TardisPosition.X + this.frameSize.X, this.TardisPosition.Y + this.frameSize.Y, 0));
+            this.ShieldBbox = new BoundingBox(new Vector3(this.TardisPosition.X - (this.shieldSize.X - this.frameSize.X) / 2, this.TardisPosition.Y, 0),
+                                              new Vector3(this.TardisPosition.X - (this.shieldSize.X - this.frameSize.X) / 2 + this.shieldSize.X, this.TardisPosition.Y + this.shieldSize.Y, 0));
             base.Update(gameTime);
         }
 

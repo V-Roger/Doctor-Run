@@ -24,6 +24,8 @@ namespace Doctor_Run
         private Tardis tardis;
         private List<Foe> baddies;
         Random rnd;
+
+        private List<Obstacle> obstacles;
           
 
         private float timer;
@@ -31,7 +33,7 @@ namespace Doctor_Run
 
         private bool lvlOver;
 
-        private string lvlType = "ruins";
+        private string lvlType = "city";
 
         private enum gameState
         {
@@ -75,6 +77,7 @@ namespace Doctor_Run
             who = new Doctor(this);
             tardis = new Tardis(this);
             baddies = new List<Foe>();
+            obstacles = new List<Obstacle>();
             timer = -1f;
             lvlOver = false;
             rnd = new Random();
@@ -153,7 +156,7 @@ namespace Doctor_Run
                 DalekApocalypse(gameTime);
             }
 
-
+            generateObstacleCourse();
 
             if (who.State == Status.DEAD)
             {
@@ -181,6 +184,10 @@ namespace Doctor_Run
 
             ennemiesCollision();
 
+            shieldCollision();
+
+            obstaclesCollision();
+
             if(!lvlOver && Engine2D.testCollision(who, tardis.tardisBbox))
             {
                 who.enterTardis();
@@ -192,9 +199,50 @@ namespace Doctor_Run
 
         private void checkLvlEnd()
         {
-            if (this.lvl.LvlLength * GraphicsDevice.Viewport.Width + this.lvl.Bg_Position.X <= 250)
+            if ((-this.lvl.Bg_Position.X >= this.lvl.LvlLength * GraphicsDevice.Viewport.Width - 250) && this.tardis.tardisPosition.X > 1750)
             {
                 this.tardis.tardisPosition -= new Vector2(1.5f, 0);
+            }
+        }
+
+        private void obstaclesCollision()
+        {
+            foreach (Obstacle obs in obstacles)
+            {
+                if (Engine2D.testCollision(who, obs.Bbox))
+                {
+                    who.State = Status.BLOCKED;
+                    who.Velocity = new Vector2(0,who.Velocity.Y);
+                    Vector2 bounce = who.Position;
+                    Vector2 backSlide = new Vector2(-0.1f, 0);
+                    while (who.Position.X > bounce.X - 2)
+                    {
+                        who.Position += backSlide;
+                    }
+                }
+                else
+                {
+                    who.State = Status.FREE;
+                }
+            }
+        }
+
+        private void shieldCollision()
+        {
+            foreach (Foe baddy in baddies)
+            {
+                if (baddy is Dalek)
+                {
+                    Dalek dalek = (Dalek)baddy;
+                    foreach (LaserBeam laser in dalek.DalekLove)
+                    {
+                        if (Engine2D.testShield(laser.Bbox, this.tardis.shieldBbox))
+                        {
+                            laser.State = Status.DEAD;
+                        }
+                    }
+                    
+                }
             }
         }
 
@@ -210,14 +258,26 @@ namespace Doctor_Run
                 {
                     if (Engine2D.testSonicAttack(who.SonicBbox, baddy.Bbox))
                     {
-                        baddy.State = Status.DEAD;
+                        baddy.kill();
+                    }
+                    if (Engine2D.testCollision(baddy, this.tardis.shieldBbox))
+                    {
+                        baddy.kill();
                     }
                 }
                 else if (baddy is Dalek)
                 {
-                    if (Engine2D.testLaserAttack(who.Bbox,(Dalek) baddy))
+                    if (Engine2D.testLaserAttack(who.Bbox,(Dalek) baddy) && who.DoctorMouvement != Mouvement.GLISSADE)
                     {
+                        Exit();
                         who.State = Status.DEAD;
+                    }
+                }
+                else if (baddy is WeepingAngel)
+                {
+                    if (Engine2D.testCollision(baddy, this.tardis.shieldBbox))
+                    {
+                        baddy.State = Status.BLOCKED;
                     }
                 }
             }
@@ -237,7 +297,7 @@ namespace Doctor_Run
 
         private void WeepingAngelsAttack(GameTime gameTime)
         {
-            if (rnd.Next(1, 600) == 1)
+            if (rnd.Next(1, 700) == 1)
             {
                 baddies.Add(new WeepingAngel(this, new Vector2(0, 950), Orientation.DROITE, who));
             }
@@ -248,6 +308,14 @@ namespace Doctor_Run
             if (rnd.Next(1, 350) == 1)
             {
                 baddies.Add(new Dalek(this, new Vector2(0, 950), Orientation.DROITE, who));
+            }
+        }
+
+        private void generateObstacleCourse()
+        {
+            if (rnd.Next(1, 400) == 1)
+            {
+                obstacles.Add(new Obstacle(this));
             }
         }
     }
